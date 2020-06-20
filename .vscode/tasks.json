@@ -1,0 +1,91 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build and run",
+            "type": "shell",
+            "command": [
+                "mkdir ${workspaceFolder}\\bin ||",
+                "mkdir ${workspaceFolder}\\bin\\${relativeFileDirname} ||",
+                "\"C:\\Program Files (x86)\\DOSBox-0.74-3\\DOSBox.exe\"",
+                "-noconsole",
+                "-c \"z:\\mount e ${workspaceFolder}\"",
+                "-c @e:",
+                "-c \"@cd bin\"",
+                "-c \"masm ..\\${relativeFileDirname}\\${fileBasenameNoExtension}.asm ${relativeFileDirname}\\${fileBasenameNoExtension}.obj NUL NUL\"",
+                "-c \"@cd ${relativeFileDirname}\"",
+                "-c \"link ${fileBasenameNoExtension}.obj\"",
+                "-c @cd\\",
+                "-c @cls",
+                "-c bin\\${relativeFileDirname}\\${fileBasenameNoExtension}.exe",
+                "-c @pause",
+                "-c @exit"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true,
+            },
+            "problemMatcher": ["$eslint-compact"]
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "command": [
+                "mkdir ${workspaceFolder}\\bin ||",
+                "mkdir ${workspaceFolder}\\bin\\${relativeFileDirname} || ",
+                "\"C:\\Program Files (x86)\\DOSBox-0.74-3\\DOSBox.exe\"",
+                "-noconsole",
+                "-c \"z:\\mount e ${workspaceFolder}\"",
+                "-c @e:",
+                "-c \"@cd bin\"",
+                "-c \"masm ..\\${relativeFileDirname}\\${fileBasenameNoExtension}.asm ${relativeFileDirname}\\${fileBasenameNoExtension}.obj NUL NUL\"",
+                "-c \"@cd ${relativeFileDirname}\"",
+                "-c \"link ${fileBasenameNoExtension}.obj\"",
+                "-c @pause",
+                "-c @exit"
+            ],
+            "problemMatcher": ["$eslint-compact"]
+        },
+        {
+            "label": "run",
+            "type": "shell",
+            "command": [
+                "\"\"C:\\Program Files (x86)\\DOSBox-0.74-3\\DOSBox.exe\"",
+                "-noconsole",
+                "-c \"z:\\mount e ${workspaceFolder}\"\"",
+                "-c @e:",
+                "-c @cls",
+                "-c bin\\${relativeFileDirname}\\${fileBasenameNoExtension}.exe",
+                "-c @pause",
+                "-c @exit"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true,
+            },
+            "problemMatcher": ["$eslint-compact"]
+        },
+        {
+            "label": "debug",
+            "type": "shell",
+            "command": [
+                "mkdir ${workspaceFolder}\\bin ||",
+                "mkdir ${workspaceFolder}\\bin\\${relativeFileDirname} || ",
+                "\"C:\\Program Files (x86)\\DOSBox-0.74-3\\DOSBox.exe\"",
+                "-noconsole",
+                "-c \"z:\\mount e ${workspaceFolder}\"",
+                "-c @e:",
+                "-c \"@cd bin\"",
+                "-c \"masm ..\\${relativeFileDirname}\\${fileBasenameNoExtension}.asm ${relativeFileDirname}\\${fileBasenameNoExtension}.obj NUL NUL\"",
+                "-c \"@cd ${relativeFileDirname}\"",
+                "-c \"link ${fileBasenameNoExtension}.obj\"",
+                "-c @cd\\",
+                "-c @cls",
+                "-c \"debug bin\\${relativeFileDirname}\\${fileBasenameNoExtension}.exe\"",
+            ],
+            "problemMatcher": ["$eslint-compact"]
+        },
+    ]
+}
