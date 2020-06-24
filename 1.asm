@@ -11,7 +11,7 @@ head dw 0; position
 tail dw 0
 food dw 0
 score dw 0
-delay_time dw 65535
+delay_time dw 32768
 data ends
 
 stack segment stack
@@ -40,11 +40,10 @@ main proc far
         call check_position
         jnc game_end
         call get_map
-        cmp al, 0h
+        cmp bl, 0h
         jne game_end
         call move_snake
         call draw_content
-        call test_sth
     jmp game_loop
     
     game_end:
@@ -52,22 +51,6 @@ main proc far
     mov ah, 4ch
     int 21h
 main endp
-
-test_sth proc near
-    push bx
-    push dx
-    
-    mov dl, direction
-    mov dh, 07h
-    add dl, 30h
-    mov bx, 1826h
-    call draw_block
-
-    pop dx
-    pop bx
-
-    ret
-test_sth endp
 
 delay proc near
     push cx
@@ -90,7 +73,10 @@ move_snake proc near
 
     mov ax, tail
     call get_map
-    mov bl, al
+    push bx
+    mov bl, 0
+    call set_map
+    pop bx
     mov ax, tail
     call position_plus_direction
     mov tail, ax
@@ -116,13 +102,13 @@ set_map proc near
     mov map[si], bl
 
     pop si
-    pop bx
+    pop ax
     ret
 set_map endp
 
 get_map proc near
-    ; getting the map value of position ax, saving it to al
-    push bx
+    ; getting the map value of position ax, saving it to bl
+    push ax
     push si
 
     mov bx, ax
@@ -132,10 +118,10 @@ get_map proc near
     add ax, bx
     mov si, ax
 
-    mov al, map[si]
+    mov bl, map[si]
 
     pop si
-    pop bx
+    pop ax
     ret
 get_map endp
 
@@ -340,14 +326,17 @@ draw_content proc near
         mov cx, MAP_WIDTH
         draw_content_column:
             cmp map[si], 0
-            jz draw_content_nothing
+            je draw_content_empty
             mov dx, 7720h; normal, bg:white, fg:white, ' '
+            jmp draw_content_draw
+            draw_content_empty:
+            mov dx, 0020h; normal, bg:white, fg:white, ' '
+            draw_content_draw:
             mov bl, cl
             pop ax
             push ax
             mov bh, al
             call draw_block
-            draw_content_nothing:
             dec si
         loop draw_content_column
         pop cx
@@ -355,9 +344,11 @@ draw_content proc near
 
     mov dx, 1120h; normal, bg:blue, fg:blue, ' '
     mov bx, food
+    add bx, 0101h
     call draw_block
     mov dx, 4420h; normal, bg:red, fg:red, ' '
     mov bx, head
+    add bx, 0101h
     call draw_block
 
     pop si
@@ -369,14 +360,14 @@ draw_content proc near
 draw_content endp
 
 initiate_game proc near
-    mov food, 0505h; row 5, column 5
+    mov food, 0404h; row 4, column 4
     mov map[156], 5; 4*38+4
     mov direction, 4
-    mov head, 0a07h; row 10, column 7
-    mov tail, 0a04h; row 10, column 4
-    mov map[345], 4; 9*38+3
+    mov head, 0907h; row 9, column 7
+    mov tail, 0904h; row 9, column 4
     mov map[346], 4; 9*38+4
     mov map[347], 4; 9*38+5
+    mov map[348], 4; 9*38+6
     ret
 initiate_game endp
 
