@@ -40,10 +40,19 @@ main proc far
         call check_position
         jnc game_end
         call get_map
-        cmp bl, 0h
+        cmp bl, 5
+        je game_scored
+        cmp bl, 0
         jne game_end
         call move_snake
+        jmp game_draw
+        game_scored:
+            inc score
+            call generate_food
+            call extend_snake
+        game_draw:
         call draw_content
+        call draw_score
     jmp game_loop
     
     game_end:
@@ -51,6 +60,21 @@ main proc far
     mov ah, 4ch
     int 21h
 main endp
+
+extend_snake proc near
+    push ax
+    push bx
+    
+    mov ax, head
+    mov bl, direction
+    call set_map
+    call position_plus_direction
+    mov head, ax
+
+    pop bx
+    pop ax
+    ret
+extend_snake endp
 
 delay proc near
     push cx
@@ -62,8 +86,33 @@ delay proc near
     ret
 delay endp
 
+generate_food proc near
+    push ax
+    push bx
+
+    generate_food_start:
+        mov al, MAP_WIDTH
+        call get_rand
+        mov bh, ah
+        mov al, MAP_HEIGHT
+        call get_rand
+        mov al, bh
+
+        call get_map
+        cmp bl, 0
+        jne generate_food_start
+        mov bl, 5
+        call set_map
+    mov food, ax
+
+    pop bx
+    pop ax
+    ret
+generate_food endp
+
 move_snake proc near
     push ax
+    push bx
     
     mov ax, head
     mov bl, direction
@@ -81,6 +130,7 @@ move_snake proc near
     call position_plus_direction
     mov tail, ax
 
+    pop bx
     pop ax
     ret
 move_snake endp
@@ -449,37 +499,22 @@ reset_screen proc near
     ret
 reset_screen endp
 
-get_rand_38 proc near
-    ; getting random number from 0~37, and saving it to ah
+get_rand proc near
+    ; getting random number not bigger than al, and saving it to ah
     ; don't know how it works
     push bx
+    push ax
     mov ax, 0h
     out 43h, al
     in al, 40h
     in al, 40h
     in al, 40h
 
-    mov bl, 38
+    pop bx
     div bl
     pop bx
     ret
-get_rand_38 endp
-
-get_rand_22 proc near
-    ; getting random number from 0~21, and saving it to ah
-    ; don't know how it works
-    push bx
-    mov ax, 0h
-    out 43h, al
-    in al, 40h
-    in al, 40h
-    in al, 40h
-
-    mov bl, 22
-    div bl
-    pop bx
-    ret
-get_rand_22 endp
+get_rand endp
 
 code ends
 end main
