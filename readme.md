@@ -1,7 +1,7 @@
 # snake in masm
 ![](https://github.com/lsn42/snake/blob/master/image/snake.gif)
 |process|description|
-|----|----|
+|:----|:----|
 |extend_snake|extend the head of snake|
 |move_snake|extend the head of snake and reduce the tail|
 |generate_food|putting a new food on the map|

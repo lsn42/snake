@@ -479,6 +479,26 @@ get_input proc near
     ret
 get_input endp
 
+get_map proc near
+    ; getting the map value of position ax, saving it to bl
+    push ax
+    push si
+
+    ; getting the offset and saving it to si
+    mov bx, ax
+    mov ax, MAP_WIDTH
+    mul bh
+    mov bh, 0
+    add ax, bx
+    mov si, ax
+
+    mov bl, map[si]
+
+    pop si
+    pop ax
+    ret
+get_map endp
+
 set_map proc near
     ; setting the map value of position ax to bl
     push ax
@@ -500,26 +520,6 @@ set_map proc near
     pop ax
     ret
 set_map endp
-
-get_map proc near
-    ; getting the map value of position ax, saving it to bl
-    push ax
-    push si
-
-    ; getting the offset and saving it to si
-    mov bx, ax
-    mov ax, MAP_WIDTH
-    mul bh
-    mov bh, 0
-    add ax, bx
-    mov si, ax
-
-    mov bl, map[si]
-
-    pop si
-    pop ax
-    ret
-get_map endp
 
 reset_screen proc near
     ; setting the display method to "80*25, 16 color" to reset the screen, and
